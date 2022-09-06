@@ -110,3 +110,7 @@ ENV/
 tests/files/temp/
 
 .venv/
+
+# MAC
+.DS_Store
+
