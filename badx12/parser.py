@@ -12,6 +12,45 @@ from badx12.utils.transaction_set import (
 )
 
 
+def _create_generic_element(index, value):
+    """
+    Create a generic element based on the data found. Populate all the
+    fields so that validation will pass.
+    :param index: the position of the element for providing a name.
+    :param value: the content for the element being created.
+    :return: a generic element.
+    """
+    element = Element()
+    element.name = "GEN" + f"{index:03}"
+    element.content = value
+    element.description = "(None)"
+    element.required = False
+    length = len(value)
+    element.min_length = length
+    element.max_length = length
+    return element
+
+
+def _parse__unknown_segment(segment, segment_field_list):
+    """Generically parse unknown segments by creating a
+    new element and appending it to the segment.
+    :param segment: the segment to append the values.
+    :param segment_field_list: the list of segments to parse.
+    """
+    for index, value in enumerate(segment_field_list):
+        element = _create_generic_element(index, value)
+        segment.fields.append(element)
+
+
+def _parse_segment(segment, segment_field_list):
+    """Generically parse segments
+    :param segment: the segment to insert the values.
+    :param segment_field_list: the list of segments to parse.
+    """
+    for index, value in enumerate(segment_field_list):
+        segment.fields[index].content = value
+
+
 class Parser:
     def __init__(self, document=None):
         """Create a new Parser
@@ -117,55 +156,19 @@ class Parser:
         else:
             self._parse_unknown_body(segment)
 
-    def _parse_segment(self, segment, segment_field_list):
-        """Generically parse segments
-        :param segment: the segment to insert the values.
-        :param segment_field_list: the list of segments to parse.
-        """
-        for index, value in enumerate(segment_field_list):
-            segment.fields[index].content = value
-
-    def _create_generic_element(self, index, value):
-        """
-        Create a generic element based on the data found. Populate all the
-        fields so that validation will pass.
-        :param index: the position of the element for providing a name.
-        :param value: the content for the element being created.
-        :return: a generic element.
-        """
-        element = Element()
-        element.name = "GEN" + str(index)
-        element.content = value
-        element.description = "A generic element created by the parser"
-        element.required = False
-        length = len(value)
-        element.min_length = length
-        element.max_length = length
-        return element
-
-    def _parse__unknown_segment(self, segment, segmentFieldList):
-        """Generically parse unknown segments by creating a
-        new element and appending it to the segment.
-        :param segment: the segment to append the values.
-        :param segmentFieldList: the list of segments to parse.
-        """
-        for index, value in enumerate(segmentFieldList):
-            element = self._create_generic_element(index, value)
-            segment.fields.append(element)
-
     def _parse_group_header(self, segment):
         """Parse the group header"""
         self.current_group = Group()
         header = GroupHeader()
         header_field_list = segment.split(self.document.config.element_separator)
-        self._parse_segment(header, header_field_list)
+        _parse_segment(header, header_field_list)
         self.current_group.header = header
 
     def _parse_group_trailer(self, segment):
         """Parse the group trailer"""
         trailer = GroupTrailer()
         trailer_field_list = segment.split(self.document.config.element_separator)
-        self._parse_segment(trailer, trailer_field_list)
+        _parse_segment(trailer, trailer_field_list)
         self.current_group.trailer = trailer
         self.document.interchange.groups.append(self.current_group)
 
@@ -173,7 +176,7 @@ class Parser:
         """Parse the interchange trailer segment"""
         trailer = self.document.interchange.trailer
         trailer_field_list = segment.split(self.document.config.element_separator)
-        self._parse_segment(trailer, trailer_field_list)
+        _parse_segment(trailer, trailer_field_list)
 
     def _parse_transaction_set_header(self, segment):
         """Parse transaction set header
@@ -182,7 +185,7 @@ class Parser:
         self.current_transaction = TransactionSet()
         transaction_header = TransactionSetHeader()
         header_field_list = segment.split(self.document.config.element_separator)
-        self._parse_segment(transaction_header, header_field_list)
+        _parse_segment(transaction_header, header_field_list)
         self.current_transaction.header = transaction_header
 
     def _parse_transaction_set_trailer(self, segment):
@@ -191,7 +194,7 @@ class Parser:
         """
         transaction_trailer = TransactionSetTrailer()
         trailer_field_list = segment.split(self.document.config.element_separator)
-        self._parse_segment(transaction_trailer, trailer_field_list)
+        _parse_segment(transaction_trailer, trailer_field_list)
         self.current_transaction.trailer = transaction_trailer
         self.current_group.transaction_sets.append(self.current_transaction)
 
@@ -199,7 +202,7 @@ class Parser:
         if segment:
             generic_segment = Segment()
             generic_field_list = segment.split(self.document.config.element_separator)
-            self._parse__unknown_segment(generic_segment, generic_field_list)
+            _parse__unknown_segment(generic_segment, generic_field_list)
             try:
                 self.current_transaction.transaction_body.append(generic_segment)
             except AttributeError:

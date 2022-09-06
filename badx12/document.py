@@ -16,7 +16,7 @@ class DocumentConfiguration:
         self.segment_terminator = segment_terminator
         self.sub_element_separator = sub_element_separator
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
             "element_separator": self.element_separator,
             "segment_terminator": self.segment_terminator,
@@ -62,14 +62,22 @@ class EDIDocument:
         self.interchange.validate(report)
         return report
 
-    def to_dict(self):
-        return {
-            "document": {
-                "text": self.text,
-                "config": self.config.to_dict(),
-                "interchange": self.interchange.to_dict(),
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "document": {
+                    "text": self.text,
+                    "interchange": self.interchange.to_dict(minimal),
+                }
             }
-        }
+        else:
+            return {
+                "document": {
+                    "text": self.text,
+                    "config": self.config.to_dict(minimal),
+                    "interchange": self.interchange.to_dict(minimal),
+                }
+            }
 
     def __repr__(self):
         _pp = pp.PrettyPrinter(indent=2)

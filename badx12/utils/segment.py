@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint as pp
 
 from badx12._settings import DocumentSettings
 
@@ -66,14 +65,20 @@ class Segment(object):
         out += self.segment_terminator
         return out
 
-    def to_dict(self):
-        return {
-            "field_count": self.field_count,
-            "fields": [field.to_dict() for field in self.fields],
-            "element_separator": self.element_separator,
-            "segment_terminator": self.segment_terminator,
-            "sub_element_separator": self.sub_element_separator,
-        }
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+            }
+        else:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+                "element_separator": self.element_separator,
+                "segment_terminator": self.segment_terminator,
+                "sub_element_separator": self.sub_element_separator,
+            }
 
     def __str__(self):
         """Return the segment as a string"""

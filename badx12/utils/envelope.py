@@ -51,11 +51,11 @@ class Envelope(object):
     def number_of_segments(self):
         return len(self.body)
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
-            "header": self.header.to_dict(),
-            "trailer": self.trailer.to_dict(),
-            "body": [item.to_dict() for item in self.body],
+            "header": self.header.to_dict(minimal),
+            "trailer": self.trailer.to_dict(minimal),
+            "body": [item.to_dict(minimal) for item in self.body],
         }
 
 

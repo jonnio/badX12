@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint as pp
 
 from .errors import FieldValidationError
 
@@ -39,8 +38,8 @@ class Element(object):
         if content_length < self.min_length:
             report.add_error(
                 FieldValidationError(
-                    msg=f"Field {self.name} is too short. Found {content_length} characters, expected "
-                    f"{self.min_length} characters.",
+                    msg=f"Field {self.name} ({self.description}) is too short. Found {content_length} "
+                        f"characters, expected {self.min_length} characters.",
                     segment=self,
                 )
             )
@@ -54,27 +53,33 @@ class Element(object):
         if content_length > self.max_length:
             report.add_error(
                 FieldValidationError(
-                    msg=f"Field {self.name} is too long. Found {content_length} characters, "
-                    f"expected {self.max_length} characters.",
+                    msg=f"Field {self.name} ({self.description}) is too short. Found {content_length} "
+                        f"characters, expected {self.min_length} characters.",
                     segment=self,
                 )
             )
 
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "description": self.description,
-            "required": self.required,
-            "min_length": self.min_length,
-            "max_length": self.max_length,
-            "content": self.content,
-        }
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "name": self.name,
+                "content": self.content,
+            }
+        else:
+            return {
+                "name": self.name,
+                "description": self.description,
+                "required": self.required,
+                "min_length": self.min_length,
+                "max_length": self.max_length,
+                "content": self.content,
+            }
 
     def __str__(self):
         if self.required:
             return str(self.content)
 
-        if self.content != "":
+        if self.content:
             return str(self.content)
 
         return ""

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint as pp
 
 from badx12.utils import Element, GroupEnvelope, Segment
 from badx12.utils.errors import IDMismatchError, SegmentCountError
@@ -49,17 +48,17 @@ class Group(GroupEnvelope):
                 SegmentCountError(
                     segment=self.trailer.id,
                     msg=f"The {self.trailer.ge01.description} in {self.trailer.ge01.name} value of "
-                    f"{self.trailer.ge01.content}  does not match the parsed count of "
-                    f"{str(len(self.transaction_sets))}",
+                        f"{self.trailer.ge01.content}  does not match the parsed count of "
+                        f"{str(len(self.transaction_sets))}",
                 )
             )
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
-            "header": self.header.to_dict(),
-            "trailer": self.trailer.to_dict(),
-            "body": [item.to_dict() for item in self.body],
-            "transaction_sets": [item.to_dict() for item in self.transaction_sets],
+            "header": self.header.to_dict(minimal),
+            "trailer": self.trailer.to_dict(minimal),
+            "body": [item.to_dict(minimal) for item in self.body],
+            "transaction_sets": [item.to_dict(minimal) for item in self.transaction_sets],
         }
 
 
@@ -125,7 +124,7 @@ class GroupHeader(Segment):
             description="Group Time",
             required=True,
             min_length=4,
-            max_length=4,
+            max_length=8,
             content="",
         )
         self.fields.append(self.gs05)
@@ -160,14 +159,20 @@ class GroupHeader(Segment):
         )
         self.fields.append(self.gs08)
 
-    def to_dict(self):
-        return {
-            "field_count": self.field_count,
-            "fields": [field.to_dict() for field in self.fields],
-            "element_separator": self.element_separator,
-            "segment_terminator": self.segment_terminator,
-            "sub_element_separator": self.sub_element_separator,
-        }
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+            }
+        else:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+                "element_separator": self.element_separator,
+                "segment_terminator": self.segment_terminator,
+                "sub_element_separator": self.sub_element_separator,
+            }
 
 
 class GroupTrailer(Segment):
@@ -207,11 +212,17 @@ class GroupTrailer(Segment):
         )
         self.fields.append(self.ge02)
 
-    def to_dict(self):
-        return {
-            "field_count": self.field_count,
-            "fields": [field.to_dict() for field in self.fields],
-            "element_separator": self.element_separator,
-            "segment_terminator": self.segment_terminator,
-            "sub_element_separator": self.sub_element_separator,
-        }
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+            }
+        else:
+            return {
+                "field_count": self.field_count,
+                "fields": [field.to_dict(minimal) for field in self.fields],
+                "element_separator": self.element_separator,
+                "segment_terminator": self.segment_terminator,
+                "sub_element_separator": self.sub_element_separator,
+            }

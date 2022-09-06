@@ -23,9 +23,9 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
 ]
 requires = [
-    "click==8.0",
-    "dicttoxml==1.7.4",
-    "flit==3.7",
+    "click>=8.0",
+    "dicttoxml>=1.7.4",
+    "flit>=3.7",
 ]
 description-file = "README.md"
 requires-python = ">=3.6"
@@ -33,14 +33,20 @@ requires-python = ">=3.6"
 [tool.flit.metadata.urls]
 Documentation = "https://badx12.readthedocs.io/en/latest/"
 
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
 [tool.flit.metadata.requires-extra]
 test = [
-    "pytest==6.0.1",
-    "pytest-runner==5.2",
-    "pytest-cov==2.10.0",
-    "codecov==2.1.8",
-    "flake8==3.8.3",
-    "isort==5.4.1",
+    "pytest>=6.0.1",
+    "pytest-runner>=5.2",
+    "pytest-cov>=2.10.0",
+    "codecov>=2.1.8",
+    "flake8>=3.8.3",
+    "isort>=5.4.1",
     "mypy",
     "black",
 ]
@@ -52,10 +58,10 @@ doc = [
 dev = [
     "pycalver",
     "black",
-    "twine==3.2.0",
-    "wheel==0.35.0",
+    "twine>=3.2.0",
+    "wheel>=0.35.0",
     "packaging>=20.2",
-    "pre-commit==2.6.0",
+    "pre-commit>=2.6.0",
 ]
 all = []
 

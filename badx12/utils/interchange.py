@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint as pp
 
 from .element import Element
 from .envelope import InterchangeEnvelope
@@ -50,17 +49,17 @@ class Interchange(InterchangeEnvelope):
             report.add_error(
                 SegmentCountError(
                     msg=f"The {self.trailer.iea01.description} in {self.trailer.iea01.name} value of "
-                    f"{self.trailer.iea01.content} does not match the parsed count of {len(self.groups)}",
+                        f"{self.trailer.iea01.content} does not match the parsed count of {len(self.groups)}",
                     segment=self.trailer.id,
                 )
             )
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
-            "header": self.header.to_dict(),
-            "trailer": self.trailer.to_dict(),
-            "body": [item.to_dict() for item in self.body],
-            "groups": [group.to_dict() for group in self.groups],
+            "header": self.header.to_dict(minimal),
+            "trailer": self.trailer.to_dict(minimal),
+            "body": [item.to_dict(minimal) for item in self.body],
+            "groups": [group.to_dict(minimal) for group in self.groups],
         }
 
 
@@ -241,14 +240,20 @@ class InterchangeHeader(Segment):
         )
         self.fields.append(self.isa16)
 
-    def to_dict(self):
-        return {
-            "field_count": self.field_count,
-            "fields": [val.to_dict() for val in self.fields],
-            "element_separator": self.element_separator,
-            "segment_terminator": self.segment_terminator,
-            "sub_element_separator": self.sub_element_separator,
-        }
+    def to_dict(self, minimal=False):
+        if minimal:
+            return {
+                "field_count": self.field_count,
+                "fields": [val.to_dict(minimal) for val in self.fields],
+            }
+        else:
+            return {
+                "field_count": self.field_count,
+                "fields": [val.to_dict(minimal) for val in self.fields],
+                "element_separator": self.element_separator,
+                "segment_terminator": self.segment_terminator,
+                "sub_element_separator": self.sub_element_separator,
+            }
 
 
 class InterchangeTrailer(Segment):
@@ -288,10 +293,10 @@ class InterchangeTrailer(Segment):
         )
         self.fields.append(self.iea02)
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
             "field_count": self.field_count,
-            "fields": [val.to_dict() for val in self.fields],
+            "fields": [val.to_dict(minimal) for val in self.fields],
             "element_separator": self.element_separator,
             "segment_terminator": self.segment_terminator,
             "sub_element_separator": self.sub_element_separator,

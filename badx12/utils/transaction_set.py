@@ -51,11 +51,11 @@ class TransactionSet(TransactionSetEnvelope):
                 )
             )
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
-            "header": self.header.to_dict(),
-            "trailer": self.trailer.to_dict(),
-            "body": [item.to_dict() for item in self.body],
+            "header": self.header.to_dict(minimal),
+            "trailer": self.trailer.to_dict(minimal),
+            "body": [item.to_dict(minimal) for item in self.body],
         }
 
 
@@ -106,10 +106,10 @@ class TransactionSetHeader(Segment):
         )
         self.fields.append(self.st03)
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
             "field_count": self.field_count,
-            "fields": [field.to_dict() for field in self.fields],
+            "fields": [field.to_dict(minimal) for field in self.fields],
         }
 
 
@@ -150,8 +150,8 @@ class TransactionSetTrailer(Segment):
         )
         self.fields.append(self.se02)
 
-    def to_dict(self):
+    def to_dict(self, minimal=False):
         return {
             "field_count": self.field_count,
-            "fields": [field.to_dict() for field in self.fields],
+            "fields": [field.to_dict(minimal) for field in self.fields],
         }

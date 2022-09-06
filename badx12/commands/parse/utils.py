@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-import time
+from datetime import datetime
 
 from dicttoxml import dicttoxml  # type: ignore
 
@@ -19,7 +19,7 @@ def export_file(dict_obj, export_type=None, output_dir=None):
 
 def _parse_params(dict_obj, export_type, output_dir):
     output_dir.mkdir(exist_ok=True)
-    file_name = f"{int(time.time())}.{export_type.lower()}"
+    file_name = f"{datetime.now().strftime('%Y%m%d%H%M%S.%f')}.{export_type.lower()}"
 
     func = {"json": _json, "xml": _xml}.get(export_type.lower(), "json")
 
