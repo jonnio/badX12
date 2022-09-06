@@ -25,8 +25,7 @@ classifiers = [
 requires = [
     "click>=8.0",
     "dicttoxml>=1.7.4",
-    "flit>=3.7",
-    "dicttoxml"
+    "flit>=3.7"
 ]
 description-file = "README.md"
 requires-python = ">=3.9"
