@@ -45,9 +45,17 @@ def test_edi_271():
     assert report.is_document_valid() is True
     assert len(report.error_list) == 0
     assert parser.document.format_as_edi() != ""
-    # print(parser.document.format_as_edi())
-    # print(json.dumps(parser.document.to_dict(), indent=2))
-    print(json.dumps(parser.document.to_dict(minimal=True), indent=2))
+
+    json_doc = json.dumps(parser.document.to_dict(minimal=True))
+    assert json_doc
+    assert "content" in json_doc
+    assert "description" not in json_doc
+
+    json_doc = json.dumps(parser.document.to_dict(minimal=False))
+    assert "description" in json_doc
+
+    json_doc = json.dumps(parser.document.to_dict())
+    assert "description" in json_doc
 
 
 def test_to_validation_error_string():
